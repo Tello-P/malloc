@@ -3,7 +3,6 @@
 #include <assert.h>
 
 
-
 #define HEAP_CAPACITY 640000
 #define HEAP_ALLOCATED_CHUNKS_CAPACITY 1024
 
@@ -21,6 +20,11 @@ size_t heap_allocated_chunks_size = 0;
 
 
 void *heap_alloc(size_t size){
+
+  if (size <= 0)
+    return 0;
+
+
   assert(heap_size + size <= HEAP_CAPACITY);
   void *result = heap + heap_size;
   heap_size += size;
@@ -59,6 +63,7 @@ void heap_collect(void *ptr){
 
 
 int main(){
+ 
   for (int i=0; i<100; i++){
     heap_alloc(i);
   }
