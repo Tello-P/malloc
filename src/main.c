@@ -87,9 +87,12 @@ void chunk_list_insert(Chunk_List *list, void *start, size_t size){
 }
 
 void chunk_list_remove(Chunk_List *list, size_t index){
-  assert(false && "not implemented");
-  (void)index;
-  (void)list;
+  assert(index < list->count);
+  for (size_t i = index; i<list->count-1; ++i){
+    list->chunks[i] = list->chunks[i+1];
+  }
+  list->count -= 1;
+
 }
 
 Chunk_List allocated_chunks = {0};
@@ -133,7 +136,7 @@ void heap_collect(void *ptr){
 
 int main(){
  
-  for (int i=0; i<100; ++i){
+  for (int i=0; i<10; ++i){
     void *p = heap_alloc(i);
     if (i%2 == 0){
       heap_free(p);
@@ -141,6 +144,7 @@ int main(){
   }
 
   chunk_list_dump(&allocated_chunks);
+  chunk_list_dump(&freed_chunks);
 
 /*
   for (int i=0; i<100; i++){
