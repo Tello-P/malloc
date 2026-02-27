@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h> //*bsearch()
+////#include <stdlib.h> //*bsearch()
 #include <stdbool.h>
 #include <assert.h>
-
+#include "binarySearch.h"
 
 #define HEAP_CAPACITY 640000
 #define CHUNK_LIST_CAPACITY 1024
@@ -50,7 +50,7 @@ int chunk_list_find(const Chunk_List *list, void *ptr){
     .start = ptr
   };
 
-   heap_chunk *result = bsearch(&key, list->chunks, list->count,
+   heap_chunk *result = my_bsearch(&key, list->chunks, list->count,
                  sizeof(list->chunks[0]),
                 chunk_start_comp);
   
