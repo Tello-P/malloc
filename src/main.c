@@ -7,6 +7,9 @@
 #define HEAP_CAPACITY 640000
 #define CHUNK_LIST_CAPACITY 1024
 
+#define ALIGNMENT 8
+#define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1))
+
 char heap[HEAP_CAPACITY] = {0};
 //size_t heap_size = 0;
 
@@ -54,7 +57,7 @@ void chunk_list_insert(Chunk_List *list, void *start, size_t size){
 }
 
 
-
+/*
 void chunk_list_merge( Chunk_List *dst, const Chunk_List *src){
   dst->count=0;
 
@@ -73,7 +76,29 @@ void chunk_list_merge( Chunk_List *dst, const Chunk_List *src){
     }
   }
 }
+*/
 
+//it is already sorted
+void chunk_list_merge(Chunk_List *dst, const Chunk_List *src) {
+    dst->count = 0;
+    if (src->count == 0) return;
+
+    dst->chunks[0] = src->chunks[0];
+    dst->count = 1;
+
+    for (size_t i = 1; i < src->count; ++i) {
+        heap_chunk *top = &dst->chunks[dst->count - 1];
+        heap_chunk current = src->chunks[i];
+
+        if (top->start + top->size == current.start) {
+            top->size += current.size;
+        } else {
+            assert(dst->count < CHUNK_LIST_CAPACITY);
+            dst->chunks[dst->count] = current;
+            dst->count++;
+        }
+    }
+}
 
 void chunk_list_dump(const  Chunk_List *list){
   printf("Chunks (%zu):\n",list->count);
@@ -134,6 +159,8 @@ void chunk_list_remove(Chunk_List *list, size_t index){
 void *heap_alloc(size_t size){
 
   if (size > 0){
+    // uncomment this for round up size
+    //size = ALIGN(size);
     chunk_list_merge(&tmp_chunks, &freed_chunks);
     freed_chunks = tmp_chunks;
   for (size_t i=0; i<freed_chunks.count; ++i){
@@ -154,16 +181,41 @@ void *heap_alloc(size_t size){
   return NULL;
 }
 
+void chunk_list_coalesce(Chunk_List *list) {
+    if (list->count <= 1) return;
 
+    size_t new_count = 1;
+    for (size_t i = 1; i < list->count; ++i) {
+        heap_chunk *prev = &list->chunks[new_count - 1];
+        heap_chunk *curr = &list->chunks[i];
+
+        if (prev->start + prev->size == curr->start) {
+            prev->size += curr->size;
+        } else {
+            list->chunks[new_count] = *curr;
+            new_count++;
+        }
+    }
+    list->count = new_count;
+}
 void heap_free(void *ptr){
 
   if (ptr != NULL){
+
     const int index = chunk_list_find(&allocated_chunks, ptr);
     assert(index >= 0);
     assert(ptr == allocated_chunks.chunks[index].start);
+    
+    heap_chunk chunk = allocated_chunks.chunks[index];
+    chunk_list_remove(&allocated_chunks, (size_t)index);
+    chunk_list_insert(&freed_chunks, chunk.start, chunk.size);
+
+    /*
     chunk_list_insert(&freed_chunks, allocated_chunks.chunks[index].start,
                       allocated_chunks.chunks[index].size);
     chunk_list_remove(&allocated_chunks, (size_t) index);
+    */
+    chunk_list_coalesce(&freed_chunks);
   }
   else{
     printf("Freeing a NULL?\n");
