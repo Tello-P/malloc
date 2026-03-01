@@ -94,13 +94,14 @@ int chunk_start_comp(const void *a, const void *b){
 
 int chunk_list_find(const Chunk_List *list, void *ptr){
 
+  /*
   for(size_t i=0; i<list->count; ++i){
     if (list->chunks[i].start == ptr){
       return (int)i;
     }
   }
   return -1;
-  /*
+  */
   heap_chunk key = {
     .start = ptr
   };
@@ -112,15 +113,13 @@ int chunk_list_find(const Chunk_List *list, void *ptr){
   // REVIEW THIS  
   if (result !=0){
     assert(list->chunks <= result);
-    return (result - list->chunks)/sizeof(list->chunks[0]);
-    
+   return (int)(result - list->chunks); 
   }else{
     return -1;
   }
 
 
   return -1;
-*/
 }
 void chunk_list_remove(Chunk_List *list, size_t index){
   assert(index < list->count);
