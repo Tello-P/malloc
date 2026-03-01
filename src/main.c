@@ -149,14 +149,26 @@ void heap_collect(void *ptr){
 
 
 int main(){
+  
+
   for (int i=0; i<10; ++i){
     void *p = heap_alloc(i);
     if (i%2 == 0){
       heap_free(p);
     }
   }
+
+heap_alloc(420);
+
+  for (int i=0; i <= 4; ++i){
+    heap_alloc(i);
+  }
+
+
   chunk_list_dump(&allocated_chunks);
   chunk_list_dump(&freed_chunks);
+
+
 
 /*
   for (int i=0; i<100; i++){
