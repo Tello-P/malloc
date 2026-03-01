@@ -106,6 +106,7 @@ void chunk_list_remove(Chunk_List *list, size_t index){
 
 void *heap_alloc(size_t size){
 
+  if (size > 0){
   for (size_t i=0; i<freed_chunks.count; ++i){
     const heap_chunk chunk = freed_chunks.chunks[i];
     if (chunk.size >= size){
@@ -119,6 +120,7 @@ void *heap_alloc(size_t size){
       }
       return chunk.start;
     }
+  }
   }
   return NULL;
 }
