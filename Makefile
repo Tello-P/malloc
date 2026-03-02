@@ -22,6 +22,17 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled: $<"
 
+TEST_SRC := tests/tests.c
+TEST_TARGET := $(BIN_DIR)/unit_tests
+
+test: $(SRC_DIR)/binarySearch.c $(SRC_DIR)/main.c $(TEST_SRC)
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -DUNIT_TESTING $^ -o $(TEST_TARGET)
+	@echo "Running unit tests..."
+	./$(TEST_TARGET)
+
+
+
 clean:
 	@rm -rf $(BIN_DIR)/* $(OBJ_DIR)/*
 	@echo "Cleaned bin/ and obj/"
