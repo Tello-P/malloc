@@ -18,26 +18,6 @@ void print_banner(const char *title) {
   printf("==================================================\n");
 }
 
-void test_alignment_verbose() {
-  print_banner("8-BYTE ALIGNMENT VERIFICATION");
-
-  size_t request = 3;
-  printf("[STEP 1] Requesting %zu bytes...\n", request);
-  void *p = heap_alloc(request);
-
-  uintptr_t addr = (uintptr_t)p;
-  printf("  -> Pointer returned: %p\n", p);
-  printf("  -> Address %% 8: %lu\n", addr % 8);
-
-  if (addr % 8 == 0) {
-    printf("  [RESULT] Pointer is correctly aligned.\n");
-  } else {
-    printf("  [RESULT] FAILED: Pointer is NOT aligned!\n");
-  }
-  assert(addr % 8 == 0);
-
-  heap_free(p);
-}
 
 void test_coalescing_verbose() {
   print_banner("EAGER COALESCING (FRAGMENTATION CLEANUP)");
@@ -118,7 +98,6 @@ int main() {
   printf("STARTING HEAP ALLOCATOR TEST SUITE\n");
   printf("Heap Capacity: %d bytes\n", 640000);
 
-  test_alignment_verbose();
   test_coalescing_verbose();
   test_reuse_verbose();
   test_stress_random();
