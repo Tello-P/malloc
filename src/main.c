@@ -11,7 +11,6 @@
 #define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1))
 
 char heap[HEAP_CAPACITY] = {0};
-//size_t heap_size = 0;
 
 typedef struct
 {
@@ -57,7 +56,7 @@ void chunk_list_insert(Chunk_List *list, void *start, size_t size){
 }
 
 
-/*
+/*  Not sorted list
 void chunk_list_merge( Chunk_List *dst, const Chunk_List *src){
   dst->count=0;
 
@@ -119,7 +118,7 @@ int chunk_start_comp(const void *a, const void *b){
 
 int chunk_list_find(const Chunk_List *list, void *ptr){
 
-  /*
+  /*  Linear list find
   for(size_t i=0; i<list->count; ++i){
     if (list->chunks[i].start == ptr){
       return (int)i;
@@ -135,7 +134,6 @@ int chunk_list_find(const Chunk_List *list, void *ptr){
                  sizeof(list->chunks[0]),
                 chunk_start_comp);
   
-  // REVIEW THIS  
   if (result !=0){
     assert(list->chunks <= result);
    return (int)(result - list->chunks); 
@@ -250,7 +248,9 @@ int main(){
   heap_alloc(8);
 
 
+  printf("Allocated ");
   chunk_list_dump(&allocated_chunks);
+  printf("Freed ");
   chunk_list_dump(&freed_chunks);
 
 
