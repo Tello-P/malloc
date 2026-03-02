@@ -232,6 +232,7 @@ void heap_collect(void *ptr){
 
 void *ptrs[N] = {0};
 
+#ifndef UNIT_TESTING
 int main(){
   
 
@@ -276,3 +277,4 @@ int main(){
   return 0;
 
 }
+#endif
